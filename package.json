@@ -12,5 +12,8 @@
     "backend"
   ],
   "author": "Snej Hirpara",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
 }
