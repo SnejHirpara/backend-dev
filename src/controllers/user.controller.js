@@ -143,8 +143,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set: {
-                refreshToken: undefined
+            $unset: {
+                refreshToken: 1
             }
         },
         {
@@ -263,7 +263,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         }
 
         /**
-         * Here, below we have used findByIdAndUpdate and for changeCurrentPassword controller we have just added newPassword directly in user object and then called user.save because of one filed (password) only and we need to call the hook (encryption method (in user.model.js it is defined)) before saving user (when user.save is called)
+         * Here, below we have used findByIdAndUpdate and for changeCurrentPassword controller we have just added newPassword directly in user object and then called user.save because there is one field (password) only wee need to update and we need to call the hook (encryption method (in user.model.js it is defined)) before saving user (when user.save is called)
          */
         const user = await User.findByIdAndUpdate(
             req.user?._id,
@@ -293,7 +293,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
 
-    if (!avatar.url) {
+    if (!avatar?.url) {
         throw new ApiError(400, "Error while uploading on avatar");
     }
 
@@ -321,7 +321,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
-    if (!coverImage.url) {
+    if (!coverImage?.url) {
         throw new ApiError(400, "Error while uploading on Cover Image");
     }
 
@@ -379,7 +379,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 },
                 isSubscribed: {
                     $cond: {
-                        if: { $in: [req.user?._id, "$subscriber.subscriber"] },
+                        if: { $in: [req.user?._id, "$subscribers.subscriber"] },
                         then: true,
                         else: false
                     }
